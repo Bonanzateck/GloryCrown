@@ -4,7 +4,13 @@ import { ShinningCrownState } from "./shinningcrown_state";
 
 export class ShinningCrownResponseModel extends PlayResponseV2Model {
 
+    public coinPrize = [];
+
     constructor( version:string, name:string, math:PlatformMath, state:ShinningCrownState ) {
         super( version, name, math, state);
+        this.coinPrize = [];
+        state.cashPrizes.forEach( prize => {
+            this.coinPrize.push( {offset:prize.offset, id:prize.id, multiplier:prize.multiplier} )
+        })
     }
 }

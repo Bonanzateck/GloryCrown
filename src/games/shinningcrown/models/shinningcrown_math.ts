@@ -80,30 +80,31 @@ export class ShinningCrownMath extends PlatformMath {
 
         this.conditions["ScatterWin"] = { id:"scatter", symbol:9, minCount:3 };
         this.conditions["BonusWin"] = { id:"bonus", symbol:10, minCount:3 };
-        this.conditions["Coins"] = { id:"respin", symbol:11, minCount:5 };
+        this.conditions["HoldSpin"] = { id:"holdspin", symbol:11, minCount:5 };
+
+        this.actions["respin"] = { triggers: ["respin"], id: "respin", spins: 3 };
 
         this.xBetMath = [
-            { id:"1", weight:830, multiplier:1 },
-            { id:"2", weight:800, multiplier:2 },
-            { id:"3", weight:900, multiplier:3 },
-            { id:"4", weight:500, multiplier:4 },
-            { id:"5", weight:500, multiplier:5 },
-            { id:"6", weight:500, multiplier:6 },
-            { id:"7", weight:200, multiplier:7 },
-            { id:"8", weight:200, multiplier:8 },
-            { id:"9", weight:200, multiplier:9 },
-            { id:"10", weight:100, multiplier:10 },
-            { id:"12", weight:100, multiplier:12 },
+            { id:"XBET 1", weight:830, multiplier:1 },
+            { id:"XBET 2", weight:800, multiplier:2 },
+            { id:"XBET 3", weight:900, multiplier:3 },
+            { id:"XBET 4", weight:500, multiplier:4 },
+            { id:"XBET 5", weight:500, multiplier:5 },
+            { id:"XBET 6", weight:500, multiplier:6 },
+            { id:"XBET 7", weight:200, multiplier:7 },
+            { id:"XBET 8", weight:200, multiplier:8 },
+            { id:"XBET 9", weight:200, multiplier:9 },
+            { id:"XBET 10", weight:100, multiplier:10 },
+            { id:"XBET 12", weight:100, multiplier:12 },
             { id:"Mini", weight:50, multiplier:25 },
             { id:"Major", weight:10, multiplier:50 },
         ],
 
         this.cashMath = [
-            { id:"XBET", weight:99988, multiplier: this.xBetMath }, 
-            { id:"Big", weight:10, multiplier:1000 },
-            { id:"Grand", weight:2, multiplier:5000 }
+            { id:"XBET", weight:99988, multiplier: this.xBetMath, repeat:true }, 
+            { id:"Big", weight:10, multiplier:1000, repeat:false },
+            { id:"Grand", weight:2, multiplier:5000, repeat:false }
         ]
-
 
     }
 

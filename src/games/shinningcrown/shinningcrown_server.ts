@@ -20,7 +20,8 @@ import { SlotConditionMath } from "../../libs/engine/slots/models/slot_math_mode
 import { ShinningCrownMath } from "./models/shinningcrown_math";
 import { ShinningCrownResponseModel } from "./models/shinningcrown_response";
 import { ShinningCrownState } from "./models/shinningcrown_state";
-
+import { CashPrize } from "./actions/cashprize";
+import { Symbols } from "../../libs/engine/slots/utils/symbols";
 
 export class GameServer extends BaseSlotGame {
 
@@ -51,12 +52,16 @@ export class GameServer extends BaseSlotGame {
             EvaluateWins.FeatureWins( this.math.info, bonus, this.state.gameStatus.totalBet)
         }
 
-        const coins:SlotFeaturesState = ScatterSymbolCount.checkCondition( this.math.conditions["Coins"], state);
-        if (bonus.isActive) {
-            
+        const coins:SlotFeaturesState = ScatterSymbolCount.checkCondition( this.math.conditions["HoldSpin"], state);
+        CashPrize.updateCoinPrizeMath( this.state as ShinningCrownState, this.math as ShinningCrownMath );
+        CashPrize.CoinsMultiplier( this.rng, coins, this.state as ShinningCrownState, this.math as ShinningCrownMath );
+
+        if (coins.isActive) {
+            Triggerer.UpdateFeature(this.state, coins, this.math.actions["respin"]); 
+            Triggerer.UpdateNextAction( this.state, this.math.actions["respin"]);
         }
 
-        state.features = [scatter, bonus, coins];
+        state.features = [coins, scatter, bonus ];
         state.win = CalculateWins.AddPays( state.features ).plus( state.win ) ;
 
         this.state.gameStatus.currentWin = state.win;
@@ -71,7 +76,31 @@ export class GameServer extends BaseSlotGame {
     }
 
     protected executeReSpin() {
+        const prevState :SlotSpinState = this.state.respins.length === 0 ? this.state.paidSpin[0] : this.state.respins[this.state.respins.length-1][0]
         let state:SlotSpinState = new SlotSpinState();
+        state.initialGrid = Cloner.CloneGrid( prevState.initialGrid);
+        state.finalGrid = Cloner.CloneGrid( prevState.finalGrid);
+        state.wins = [];
+        state.win = CalculateWins.AddPays( state.wins );
+
+        const coins:SlotFeaturesState = ScatterSymbolCount.checkCondition( this.math.conditions["HoldSpin"], state);
+        coins.isActive = (coins.offsets.length > prevState.features[0].offsets.length ) && coins.offsets.length < 15;
+        if (coins.isActive) {
+            CashPrize.CoinsMultiplier( this.rng, coins, this.state as ShinningCrownState, this.math as ShinningCrownMath );
+            Triggerer.UpdateFeature(this.state, coins, this.math.actions["respin"]); 
+            Triggerer.UpdateNextAction( this.state, this.math.actions["respin"]);
+        } else {
+            UpdateFeature.updateReSpinCount( this.state);
+            if ( this.state.respin.left === 0 ) {
+                CashPrize.CalculateMultiplier( this.state as ShinningCrownState, state); 
+                state.win = BigNumber(state.multiplier).multipliedBy( this.state.gameStatus.totalBet);
+            }
+        }
+        
+        state.features = [coins ];
+        this.state.gameStatus.currentWin = state.win;
+        this.state.gameStatus.totalWin = BigNumber(this.state.gameStatus.totalWin).plus( state.win);
+        
         this.state.respins.push( [state] );
     }
 
