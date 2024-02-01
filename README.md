@@ -1,4 +1,4 @@
-# Shinning Crown
+# Glory Crown
 
 > version 0.1  
 
