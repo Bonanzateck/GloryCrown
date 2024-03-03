@@ -19,7 +19,15 @@ export class CashPrize {
         })
     }
 
-    static CoinsMultiplier( rng :IRandom, coins :SlotFeaturesState,  state :ShinningCrownState, math :ShinningCrownMath ) {
+    static FullHouse( state: ShinningCrownState) {
+        state.cashPrizes.forEach( prize => {
+            if ( prize.id.includes("XBET") ) {
+                prize.multiplier *= 2;
+            }
+        })
+    }
+
+    static CoinsMultiplier( rng :IRandom, coins :SlotFeaturesState,  state :ShinningCrownState ) {
 
         coins.offsets.forEach( offset => {
             const isPresent :boolean = state.cashPrizes.some( prize => prize.offset === offset );
@@ -28,8 +36,12 @@ export class CashPrize {
             }
 
             let awardedprize :any = RandomHelper.GetRandomFromList( rng, state.cashPrizesMath );
+            while( state.awardedJackpots.includes( awardedprize.id ) ){
+                awardedprize = RandomHelper.GetRandomFromList( rng, state.cashPrizesMath );
+            }
             if ( awardedprize.repeat === false ) {
-                state.cashPrizesMath = state.cashPrizesMath.filter( prize => prize.id !== awardedprize.id );
+                // state.cashPrizesMath = state.cashPrizesMath.filter( prize => prize.id !== awardedprize.id );
+                state.awardedJackpots.push( awardedprize.id);
             }
             if ( isNaN(Number( awardedprize.multiplier)) ){
                 awardedprize = RandomHelper.GetRandomFromList( rng, awardedprize.multiplier);

@@ -4,5 +4,6 @@ export class ShinningCrownState extends SlotState {
 
     public cashPrizes :{offset:number, id:string, multiplier:number}[] = [];
     public cashPrizesMath = [] ; 
+    public awardedJackpots = [];
 
 }

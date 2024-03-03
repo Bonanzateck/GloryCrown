@@ -17,9 +17,10 @@ export class ShinningCrownMath extends PlatformMath {
             [12, 11, 4]
         ];
         this.info = {
-            betMultiplier:new BigNumber(10),
+            betMultiplier: BigNumber(10),
             gridLayout:[3, 3, 3, 3, 3],
             wildSymbols:[0],
+            skipEval:[9, 10, 11],
             payLines:[
                 [1, 1, 1, 1, 1],
                 [0, 0, 0, 0, 0],
@@ -34,7 +35,7 @@ export class ShinningCrownMath extends PlatformMath {
             ],
             symbols:[
                 { name:"wild", key:"WILD", id:0, payout:[] },
-                { name:"HV1", key:"HIGH", id:1, payout:[ this.bd(0), this.bd(0), this.bd(2), this.bd(50), this.bd(200), this.bd(3000)] },
+                { name:"HV1", key:"HIGH", id:1, payout:[ this.bd(0), this.bd(0), this.bd(10), this.bd(50), this.bd(200), this.bd(3000)] },
                 { name:"HV2", key:"HIGH", id:2, payout:[ this.bd(0), this.bd(0), this.bd(0), this.bd(40), this.bd(100), this.bd(500)] },
                 { name:"HV3", key:"HIGH", id:3, payout:[ this.bd(0), this.bd(0), this.bd(0), this.bd(40), this.bd(100), this.bd(500)] },
                 { name:"HV4", key:"HIGH", id:4, payout:[ this.bd(0), this.bd(0), this.bd(0), this.bd(20), this.bd(50), this.bd(200)] },
@@ -74,7 +75,7 @@ export class ShinningCrownMath extends PlatformMath {
             id:"c1", weight:0,
             symbols : [ 
                 {symbol: 11, weight: 2 }, 
-                {symbol: -1, weight: 20 }
+                {symbol: -1, weight: 21 }
             ]
         }];
 
@@ -85,9 +86,9 @@ export class ShinningCrownMath extends PlatformMath {
         this.actions["respin"] = { triggers: ["respin"], id: "respin", spins: 3 };
 
         this.xBetMath = [
-            { id:"XBET 1", weight:830, multiplier:1 },
-            { id:"XBET 2", weight:800, multiplier:2 },
-            { id:"XBET 3", weight:900, multiplier:3 },
+            { id:"XBET 1", weight:1000, multiplier:1 },
+            { id:"XBET 2", weight:1000, multiplier:2 },
+            { id:"XBET 3", weight:1000, multiplier:3 },
             { id:"XBET 4", weight:500, multiplier:4 },
             { id:"XBET 5", weight:500, multiplier:5 },
             { id:"XBET 6", weight:500, multiplier:6 },
@@ -101,9 +102,9 @@ export class ShinningCrownMath extends PlatformMath {
         ],
 
         this.cashMath = [
-            { id:"XBET", weight:99988, multiplier: this.xBetMath, repeat:true }, 
-            { id:"Big", weight:10, multiplier:1000, repeat:false },
-            { id:"Grand", weight:2, multiplier:5000, repeat:false }
+            { id:"XBET", weight: 99988, multiplier: this.xBetMath, repeat: true },
+            { id:"Big", weight: 10, multiplier: 1000, repeat: false } ,
+            { id:"Grand", weight: 2, multiplier: 5000, repeat: false } 
         ]
 
     }
