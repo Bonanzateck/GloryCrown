@@ -18,7 +18,7 @@ import { UpdateFeature } from "../../libs/engine/slots/features/update_feature";
 import { RandomObj } from "../../libs/engine/generic/rng/random";
 import { SlotConditionMath } from "../../libs/engine/slots/models/slot_math_model";
 import { ShinningCrownMath } from "./models/shinningcrown_math";
-import { ShinningCrownResponseModel } from "./models/shinningcrown_response";
+import { ShinningCrownConfigResponseV2Model, ShinningCrownResponseModel } from "./models/shinningcrown_response";
 import { ShinningCrownState } from "./models/shinningcrown_state";
 import { CashPrize } from "./actions/cashprize";
 import { Symbols } from "../../libs/engine/slots/utils/symbols";
@@ -26,7 +26,7 @@ import { Symbols } from "../../libs/engine/slots/utils/symbols";
 export class GameServer extends BaseSlotGame {
 
     constructor(){
-        super("Shinning Crown", "0.4");
+        super("Shinning Crown", "0.5");
         this.math = new ShinningCrownMath();
     }
 
@@ -119,7 +119,7 @@ export class GameServer extends BaseSlotGame {
     }
 
     protected getConfigResponse( response:PlayResponseModel):ResponseModel {
-        return new ConfigResponseV2Model( this.version, this.name, this.math, this.state);
+        return new ShinningCrownConfigResponseV2Model( this.version, this.name, this.math, this.state as ShinningCrownState);
     }
 
     protected defaultEmptyState():ShinningCrownState{
