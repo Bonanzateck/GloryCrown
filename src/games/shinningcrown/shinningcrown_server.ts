@@ -21,12 +21,11 @@ import { ShinningCrownMath } from "./models/shinningcrown_math";
 import { ShinningCrownConfigResponseV2Model, ShinningCrownResponseModel } from "./models/shinningcrown_response";
 import { ShinningCrownState } from "./models/shinningcrown_state";
 import { CashPrize } from "./actions/cashprize";
-import { Symbols } from "../../libs/engine/slots/utils/symbols";
 
 export class GameServer extends BaseSlotGame {
 
     constructor(){
-        super("Shinning Crown", "0.5");
+        super("Shinning Crown", "0.6");
         this.math = new ShinningCrownMath();
     }
 
@@ -72,6 +71,42 @@ export class GameServer extends BaseSlotGame {
 
     protected executeBuyBonus() {
         let state:SlotSpinState = new SlotSpinState(); 
+        const bbAward:any = RandomHelper.GetRandomFromList( this.rng, this.math.collection["BuyBonusAward"]);
+        
+        const condition:SlotConditionMath = new SlotConditionMath();
+        condition.oak = [bbAward.count];
+        condition.symbol = 11;
+
+        const selectedSet:any = RandomHelper.GetRandomFromList( this.rng, this.math.paidReels );
+        state.reelId = selectedSet.id;
+        state.stops = CreateStops.StandardStops(this.rng, selectedSet.reels, this.math.info.gridLayout );
+        state.initialGrid = CreateGrid.StandardGrid( selectedSet.reels, state.stops);
+        state.finalGrid = Grid.ExpandSymbolInReels( this.math.info.wildSymbols[0], state.initialGrid);
+        state.wins = EvaluateWins.LineWins( this.math.info, state.finalGrid, this.state.gameStatus.stakeValue );
+        state.win = CalculateWins.AddPays( state.wins );
+
+        let coins:SlotFeaturesState = ScatterSymbolCount.checkCondition( this.math.conditions["HoldSpin"], state);
+
+        while( !coins.isActive || state.win.isGreaterThan(0) ){
+            state.stops = CreateStops.StandardStops(this.rng, selectedSet.reels, this.math.info.gridLayout );
+            state.initialGrid = CreateGrid.StandardGrid( selectedSet.reels, state.stops);
+            state.finalGrid = Grid.ExpandSymbolInReels( this.math.info.wildSymbols[0], state.initialGrid);
+            state.wins = EvaluateWins.LineWins( this.math.info, state.finalGrid, this.state.gameStatus.stakeValue );
+
+            state.wins = EvaluateWins.LineWins( this.math.info, state.finalGrid, this.state.gameStatus.stakeValue );
+            state.win = CalculateWins.AddPays( state.wins );
+
+            coins = ScatterSymbolCount.checkCondition( this.math.conditions["HoldSpin"], state);
+        }
+
+        state.features = [coins ];
+
+        CashPrize.updateCoinPrizeMath( this.state as ShinningCrownState, this.math as ShinningCrownMath );
+        CashPrize.CoinsMultiplier( this.rng, coins, this.state as ShinningCrownState );
+
+        Triggerer.UpdateFeature(this.state, coins, this.math.actions["respin"]); 
+        Triggerer.UpdateNextAction( this.state, this.math.actions["respin"]);
+
         this.state.paidSpin = [state];
     }
 

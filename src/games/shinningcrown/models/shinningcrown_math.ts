@@ -85,6 +85,8 @@ export class ShinningCrownMath extends PlatformMath {
 
         this.actions["respin"] = { triggers: ["respin"], id: "respin", spins: 3 };
 
+        this.collection["BuyBonusAward"] = [{ weight:1, count:5}]
+
         this.xBetMath = [
             { id:"XBET 1", weight:1000, multiplier:1 },
             { id:"XBET 2", weight:1000, multiplier:2 },
